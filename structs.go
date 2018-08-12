@@ -118,12 +118,11 @@ func (s *Struct) FillMap(out map[string]interface{}) {
 		if !tagOpts.Has("omitnested") {
 			finalVal = s.nested(val)
 
-			v := reflect.ValueOf(val.Interface())
-			if v.Kind() == reflect.Ptr {
-				v = v.Elem()
+			if val.Kind() == reflect.Ptr {
+				val = val.Elem()
 			}
 
-			switch v.Kind() {
+			switch val.Kind() {
 			case reflect.Map, reflect.Struct:
 				isSubStruct = true
 			}
@@ -488,11 +487,6 @@ func IsStruct(s interface{}) bool {
 	v := reflect.ValueOf(s)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
-	}
-
-	// uninitialized zero value of a struct
-	if v.Kind() == reflect.Invalid {
-		return false
 	}
 
 	return v.Kind() == reflect.Struct
